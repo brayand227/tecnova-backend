@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "https://clever-semifreddo-db5b14.netlify.app"})
 public class ProductoController {
 
     @Autowired

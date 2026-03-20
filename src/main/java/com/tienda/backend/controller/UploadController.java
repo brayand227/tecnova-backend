@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "https://clever-semifreddo-db5b14.netlify.app"})
 public class UploadController {
     
     private static final String UPLOAD_DIR = "uploads/";

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "https://clever-semifreddo-db5b14.netlify.app"})
 public class AuthController {
     
     @Autowired
