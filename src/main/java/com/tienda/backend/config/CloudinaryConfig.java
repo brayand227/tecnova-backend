@@ -1,4 +1,4 @@
-package main.java.com.tienda.backend.config;
+package com.tienda.backend.config;
 
 
 import com.cloudinary.Cloudinary;
@@ -11,7 +11,13 @@ public class CloudinaryConfig {
     
     @Bean
     public Cloudinary cloudinary() {
-        // Toma la URL de la variable de entorno CLOUDINARY_URL
-        return new Cloudinary(System.getenv("CLOUDINARY_URL"));
+        // Obtiene la URL de la variable de entorno
+        String cloudinaryUrl = System.getenv("CLOUDINARY_URL");
+        
+        if (cloudinaryUrl == null || cloudinaryUrl.isEmpty()) {
+            throw new RuntimeException("CLOUDINARY_URL no está configurada en las variables de entorno");
+        }
+        
+        return new Cloudinary(cloudinaryUrl);
     }
 }
