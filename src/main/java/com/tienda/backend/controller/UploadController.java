@@ -1,23 +1,20 @@
 package com.tienda.backend.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "https://iridescent-bublanina-5a9677.netlify.app"})
 public class UploadController {
-
-      @Autowired
+    
+    @Autowired
     private Cloudinary cloudinary;
     
     @PostMapping("/imagen")
@@ -28,8 +25,10 @@ public class UploadController {
                 ObjectUtils.asMap("folder", "tecnova")
             );
             String imageUrl = uploadResult.get("secure_url").toString();
-            System.out.println("✅ Imagen subida a Cloudinary: " + imageUrl);
-            return ResponseEntity.ok(Map.of("url", imageUrl));
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("url", imageUrl);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
