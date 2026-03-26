@@ -13,7 +13,7 @@ public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
             .allowedOrigins(
                 "http://localhost:5173",
-                "https://iridescent-bublanina-5a9677.netlify.app",  // 👈 TU URL
+                "https://iridescent-bublanina-5a9677.netlify.app", // 👈 TU URL
                 "https://app.netlify.com"
             )
             .allowedMethods("*")
