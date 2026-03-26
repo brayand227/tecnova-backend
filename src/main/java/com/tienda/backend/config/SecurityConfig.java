@@ -38,50 +38,32 @@ public class SecurityConfig {
     }
     
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Lista de orígenes permitidos
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5173",        // Frontend local (Vite/React)
-            "http://localhost:3000",        // Frontend local (React/Next.js)
-            "http://localhost:4200",        // Frontend local (Angular)
-            "http://127.0.0.1:3000",        // Frontend local (alternativo)
-            "https://clever-semifreddo-db5b14.netlify.app",  // Frontend en Netlify
-            "https://app.netlify.com"       // Netlify admin
-        ));
-        
-        // Métodos HTTP permitidos
-        configuration.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
-        ));
-        
-        // Headers permitidos
-        configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "Accept",
-            "X-Requested-With",
-            "Cache-Control"
-        ));
-        
-        // Headers expuestos
-        configuration.setExposedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Disposition"
-        ));
-        
-        // Permitir credenciales (cookies, auth headers)
-        configuration.setAllowCredentials(true);
-        
-        // Tiempo máximo de caché para preflight requests (1 hora)
-        configuration.setMaxAge(3600L);
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        
-        return source;
-    }
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList(
+        "http://localhost:5173",
+        "http://localhost:3000", 
+        "http://localhost:4200",
+        "https://iridescent-bublanina-5a9677.netlify.app",  // 👈 TU URL DE NETLIFY
+        "https://app.netlify.com"
+    ));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    configuration.setAllowedHeaders(Arrays.asList(
+        "Authorization", 
+        "Content-Type", 
+        "X-Requested-With", 
+        "Accept",
+        "multipart/form-data",
+        "enctype"
+    ));
+    configuration.setExposedHeaders(Arrays.asList("Authorization"));
+    configuration.setAllowCredentials(true);
+    configuration.setMaxAge(3600L);
+    
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
