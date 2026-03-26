@@ -1,0 +1,22 @@
+[33mfd1612d[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix PostgreSQL env vars with sslmode
+[33ma7a69b1[m Add Cloudinary configuration
+[33m537c458[m Force redeploy with prod profile
+[33md6a2383[m Fix CORS for login endpoint
+[33m881a373[m Integrate Cloudinary for image uploads
+[33m357c96d[m Fix CORS for multipart uploads
+[33ma725bb8[m cambios definitivos
+[33m7330689[m cambios 2
+[33m0b3b032[m cambios
+[33m1f34673[m Fix: Hardcoded PostgreSQL connection for testing
+[33m3264b93[m cambios definitivos
+[33m109b1ef[m cambios
+[33m95052ff[m Addd
+[33m75d725d[m Add profiles for dev and prod
+[33mbf19cd4[m correcion base
+[33m470af5e[m database h2
+[33m798bfd1[m cambio
+[33mfb0e453[m correccion base de datos
+[33ma590622[m Backend de TECNOVA - estructura corregida
+[33m01f2e88[m Remove production profaile reference
+[33maaa9dfd[m Add railway configuration
+[33mc5766d1[m Backend listo para produccion
