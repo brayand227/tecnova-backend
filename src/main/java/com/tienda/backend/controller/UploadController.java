@@ -16,38 +16,23 @@ import java.util.UUID;
 @RequestMapping("/api/upload")
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class UploadController {
-    
-    private static final String UPLOAD_DIR = "uploads/";
+
+      @Autowired
+    private Cloudinary cloudinary;
     
     @PostMapping("/imagen")
     public ResponseEntity<?> subirImagen(@RequestParam("file") MultipartFile file) {
         try {
-            // Crear directorio si no existe
-            File uploadDir = new File(UPLOAD_DIR);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-            
-            // Generar nombre único para el archivo
-            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            String filePath = UPLOAD_DIR + fileName;
-            
-            // Guardar archivo
-            Path path = Paths.get(filePath);
-            Files.write(path, file.getBytes());
-            
-            // Construir URL para acceder a la imagen
-            String fileUrl = "http://localhost:8080/uploads/" + fileName;
-            
-            Map<String, String> response = new HashMap<>();
-            response.put("url", fileUrl);
-            response.put("message", "Imagen subida exitosamente");
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (IOException e) {
+            Map uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap("folder", "tecnova")
+            );
+            String imageUrl = uploadResult.get("secure_url").toString();
+            System.out.println("✅ Imagen subida a Cloudinary: " + imageUrl);
+            return ResponseEntity.ok(Map.of("url", imageUrl));
+        } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Error al subir imagen: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 }
