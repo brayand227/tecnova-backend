@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = "*")
+
 public class UploadController {
     
     @Autowired
