@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = {"http://localhost:5173", "https://iridescent-bublanina-5a9677.netlify.app"})
+@CrossOrigin(origins = "*")
 public class UploadController {
     
     @Autowired
@@ -20,21 +20,14 @@ public class UploadController {
     @PostMapping("/imagen")
     public ResponseEntity<?> subirImagen(@RequestParam("file") MultipartFile file) {
         try {
-            // 🔍 IMPRIMIR LA CONFIGURACIÓN REAL QUE ESTÁ USANDO EL BEAN
-            System.out.println("🔍 ========== DEBUG CLOUDINARY ==========");
-            System.out.println("🔍 cloudinary.config.cloud_name: " + cloudinary.config.cloudName);
-            System.out.println("🔍 cloudinary.config.api_key: " + cloudinary.config.apiKey);
-            System.out.println("🔍 =======================================");
+            System.out.println("🔍 Usando Cloudinary bean con cloud_name: " + cloudinary.config.cloudName);
             
             Map uploadResult = cloudinary.uploader().upload(
                 file.getBytes(),
-                ObjectUtils.asMap(
-                    "folder", "tecnova",
-                    "public_id", System.currentTimeMillis()
-                )
+                ObjectUtils.asMap("folder", "tecnova")
             );
             
-            String imageUrl = uploadResult.get("secure_url").toString();
+            String imageUrl = (String) uploadResult.get("secure_url");
             System.out.println("✅ Imagen subida: " + imageUrl);
             
             Map<String, String> response = new HashMap<>();
@@ -43,7 +36,6 @@ public class UploadController {
             
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("❌ Error: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
