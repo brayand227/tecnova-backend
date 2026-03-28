@@ -42,9 +42,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
-                "http://localhost:3000",
-                "http://localhost:4200",
-                "https://iridescent-bublanina-5a9677.netlify.app", // 👈 TU URL DE NETLIFY
+                "https://iridescent-bublanina-5a9677.netlify.app", // 👈 TU URL
                 "https://app.netlify.com"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(
