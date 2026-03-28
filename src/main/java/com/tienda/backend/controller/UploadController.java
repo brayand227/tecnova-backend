@@ -2,6 +2,7 @@ package com.tienda.backend.controller;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,18 +14,17 @@ import java.util.HashMap;
 @CrossOrigin(origins = {"http://localhost:5173", "https://iridescent-bublanina-5a9677.netlify.app"})
 public class UploadController {
     
+    @Autowired
+    private Cloudinary cloudinary;
+    
     @PostMapping("/imagen")
     public ResponseEntity<?> subirImagen(@RequestParam("file") MultipartFile file) {
         try {
-            // Configuración DIRECTA de Cloudinary (para evitar problemas de inyección)
-            Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", "doeyhshgo");
-            config.put("api_key", "116184656834265");
-            config.put("api_secret", "9S3a1c3dqc1Ll2Rc2yF5P3NFuZA");
-            
-            Cloudinary cloudinary = new Cloudinary(config);
-            
-            System.out.println("✅ Cloudinary configurado DIRECTAMENTE con cloud_name: doeyhshgo");
+            // 🔍 IMPRIMIR LA CONFIGURACIÓN REAL QUE ESTÁ USANDO EL BEAN
+            System.out.println("🔍 ========== DEBUG CLOUDINARY ==========");
+            System.out.println("🔍 cloudinary.config.cloud_name: " + cloudinary.config.cloudName);
+            System.out.println("🔍 cloudinary.config.api_key: " + cloudinary.config.apiKey);
+            System.out.println("🔍 =======================================");
             
             Map uploadResult = cloudinary.uploader().upload(
                 file.getBytes(),
@@ -43,7 +43,7 @@ public class UploadController {
             
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("❌ Error subiendo imagen: " + e.getMessage());
+            System.err.println("❌ Error: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
