@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/productos")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AdminProductoController {
     
     @Autowired
@@ -87,6 +86,12 @@ public class AdminProductoController {
                 }
             }
             
+            // Asegurar que el precio sea un número sin decimales (double)
+            if (producto.getPrecio() != null) {
+                // Redondear a entero si tiene decimales
+                producto.setPrecio(Math.floor(producto.getPrecio()));
+            }
+            
             Producto nuevoProducto = productoRepository.save(producto);
             
             // Asegurar que la respuesta incluya el mapa de imágenes
@@ -110,7 +115,14 @@ public class AdminProductoController {
                 // Actualizar campos básicos
                 producto.setNombre(productoActualizado.getNombre());
                 producto.setDescripcion(productoActualizado.getDescripcion());
-                producto.setPrecio(productoActualizado.getPrecio());
+                
+                // Asegurar que el precio sea un número entero (sin decimales)
+                if (productoActualizado.getPrecio() != null) {
+                    producto.setPrecio(Math.floor(productoActualizado.getPrecio()));
+                } else {
+                    producto.setPrecio(productoActualizado.getPrecio());
+                }
+                
                 producto.setCategoria(productoActualizado.getCategoria());
                 producto.setImagenUrl(productoActualizado.getImagenUrl());
                 producto.setImagenesAdicionales(productoActualizado.getImagenesAdicionales());
@@ -135,7 +147,6 @@ public class AdminProductoController {
                 if (producto.getColoresDisponibles() != null && !producto.getColoresDisponibles().isEmpty()) {
                     for (String color : producto.getColoresDisponibles()) {
                         if (!producto.getImagenesPorColor().containsKey(color)) {
-                            // No es obligatorio, solo se puede loguear o ignorar
                             System.out.println("Advertencia: El color " + color + " no tiene imagen asociada");
                         }
                     }
@@ -170,7 +181,16 @@ public class AdminProductoController {
                     if (updates.containsKey("precio")) {
                         Object precioObj = updates.get("precio");
                         if (precioObj instanceof Number) {
-                            producto.setPrecio(((Number) precioObj).doubleValue());
+                            double precio = ((Number) precioObj).doubleValue();
+                            // Redondear a entero
+                            producto.setPrecio(Math.floor(precio));
+                        } else if (precioObj instanceof String) {
+                            try {
+                                double precio = Double.parseDouble((String) precioObj);
+                                producto.setPrecio(Math.floor(precio));
+                            } catch (NumberFormatException e) {
+                                return ResponseEntity.badRequest().body("Formato de precio inválido");
+                            }
                         }
                     }
                     if (updates.containsKey("imagenUrl")) {
@@ -199,7 +219,6 @@ public class AdminProductoController {
                     }
                     if (updates.containsKey("imagenesPorColor")) {
                         Map<String, String> imagenesPorColor = (Map<String, String>) updates.get("imagenesPorColor");
-                        // Limpiar valores nulos
                         if (imagenesPorColor != null) {
                             imagenesPorColor.entrySet().removeIf(entry -> 
                                 entry.getValue() == null || entry.getValue().trim().isEmpty()
@@ -242,7 +261,6 @@ public class AdminProductoController {
             @RequestBody Map<String, String> imagenesPorColor) {
         return productoRepository.findById(id)
             .map(producto -> {
-                // Limpiar valores nulos
                 if (imagenesPorColor != null) {
                     imagenesPorColor.entrySet().removeIf(entry -> 
                         entry.getValue() == null || entry.getValue().trim().isEmpty()
