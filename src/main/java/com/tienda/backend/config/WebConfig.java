@@ -13,7 +13,8 @@ public void addCorsMappings(CorsRegistry registry) {
             .allowedOrigins(
                 "http://localhost:5173",
                 "https://iridescent-bublanina-5a9677.netlify.app",
-                "https://5c91b5cb.tecnova-fronted.pages.dev"  // 👈 AGREGAR ESTE
+                "https://5c91b5cb.tecnova-fronted.pages.dev",
+                "https://f8179932.tecnova-fronted.pages.dev"  // 👈 AGREGAR ESTE
             )
             .allowedMethods("*")
             .allowedHeaders("*")

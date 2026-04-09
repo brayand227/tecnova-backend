@@ -45,7 +45,8 @@ public CorsConfigurationSource corsConfigurationSource() {
         "http://localhost:3000", 
         "http://localhost:4200",
         "https://iridescent-bublanina-5a9677.netlify.app",
-        "https://5c91b5cb.tecnova-fronted.pages.dev",  // 👈 TU DOMINIO DE CLOUDFLARE
+        "https://5c91b5cb.tecnova-fronted.pages.dev",
+        "https://f8179932.tecnova-fronted.pages.dev",  // 👈 TU NUEVO DOMINIO DE CLOUDFLARE
         "https://app.netlify.com"
     ));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
