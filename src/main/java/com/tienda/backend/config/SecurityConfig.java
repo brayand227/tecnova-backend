@@ -37,20 +37,25 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-   @Bean
+  @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    // NO usar "*" con allowCredentials(true)
     configuration.setAllowedOrigins(Arrays.asList(
         "http://localhost:5173",
-        "https://iridescent-bublanina-5a9677.netlify.app"
+        "http://localhost:3000", 
+        "http://localhost:4200",
+        "https://iridescent-bublanina-5a9677.netlify.app",
+        "https://5c91b5cb.tecnova-fronted.pages.dev",  // 👈 TU DOMINIO DE CLOUDFLARE
+        "https://app.netlify.com"
     ));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.setAllowedHeaders(Arrays.asList(
         "Authorization", 
         "Content-Type", 
         "X-Requested-With", 
-        "Accept"
+        "Accept",
+        "multipart/form-data",
+        "enctype"
     ));
     configuration.setExposedHeaders(Arrays.asList("Authorization"));
     configuration.setAllowCredentials(true);
