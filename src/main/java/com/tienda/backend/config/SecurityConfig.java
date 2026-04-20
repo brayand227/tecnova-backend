@@ -45,9 +45,7 @@ public class SecurityConfig {
                 "https://iridescent-bublanina-5a9677.netlify.app",
                 "https://5c91b5cb.tecnova-fronted.pages.dev",
                 "https://f8179932.tecnova-fronted.pages.dev",
-                "https://tecnova-fronted.pages.dev", // 👈 AGREGAR ESTE
-                "https://tecnova-backend.onrender.com" // 👈 AGREGAR ESTA
-
+                "https://tecnova-fronted.pages.dev" // 👈 AGREGAR ESTE
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(

@@ -12,14 +12,13 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "http://localhost:5173",
-                        "https://iridescent-bublanina-5a9677.netlify.app",
-                        "https://5c91b5cb.tecnova-fronted.pages.dev",
-                        "https://f8179932.tecnova-fronted.pages.dev",
-                        "https://tecnova-fronted.pages.dev", // 👈 AGREGAR ESTE
-                        "https://tecnova-backend.onrender.com" // 👈 TU BACKEND
+                    "http://localhost:5173",
+                    "https://iridescent-bublanina-5a9677.netlify.app",
+                    "https://5c91b5cb.tecnova-fronted.pages.dev",
+                    "https://f8179932.tecnova-fronted.pages.dev",
+                    "https://tecnova-fronted.pages.dev"  // 👈 TU DOMINIO ACTUAL DE CLOUDFLARE
                 )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 👈 Lista explícita, NO "*"
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
