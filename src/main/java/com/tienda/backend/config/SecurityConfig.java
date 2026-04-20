@@ -41,6 +41,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
+
                 "http://localhost:5173",
                 "https://iridescent-bublanina-5a9677.netlify.app",
                 "https://5c91b5cb.tecnova-fronted.pages.dev",
@@ -72,6 +73,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas
+                        .requestMatchers("/api/health").permitAll()
                         .requestMatchers("/").permitAll() // 👈 AGREGAR ESTA LÍNEA
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
