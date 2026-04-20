@@ -41,14 +41,12 @@ public class SecurityConfig {
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList(
-        "http://localhost:5173",
-        "http://localhost:3000", 
-        "http://localhost:4200",
-        "https://iridescent-bublanina-5a9677.netlify.app",
-        "https://5c91b5cb.tecnova-fronted.pages.dev",
-        "https://f8179932.tecnova-fronted.pages.dev",  // 👈 TU NUEVO DOMINIO DE CLOUDFLARE
-        "https://app.netlify.com"
-    ));
+    "http://localhost:5173",
+    "https://iridescent-bublanina-5a9677.netlify.app",
+    "https://5c91b5cb.tecnova-fronted.pages.dev",
+    "https://f8179932.tecnova-fronted.pages.dev",
+    "https://tecnova-backend.onrender.com"  // 👈 AGREGAR ESTA
+));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.setAllowedHeaders(Arrays.asList(
         "Authorization", 

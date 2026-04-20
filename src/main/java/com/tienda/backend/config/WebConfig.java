@@ -7,19 +7,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-@Override
-public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/**")
-            .allowedOrigins(
-                "http://localhost:5173",
-                "https://iridescent-bublanina-5a9677.netlify.app",
-                "https://5c91b5cb.tecnova-fronted.pages.dev",
-                "https://f8179932.tecnova-fronted.pages.dev"  // 👈 AGREGAR ESTE
-            )
-            .allowedMethods("*")
-            .allowedHeaders("*")
-            .allowCredentials(true);
-}
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(
+                    "http://localhost:5173",
+                    "https://iridescent-bublanina-5a9677.netlify.app",
+                    "https://5c91b5cb.tecnova-fronted.pages.dev",
+                    "https://f8179932.tecnova-fronted.pages.dev",
+                    "https://tecnova-backend.onrender.com"  // 👈 AGREGAR TU URL DE RENDER
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
