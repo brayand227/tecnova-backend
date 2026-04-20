@@ -37,33 +37,34 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-  @Bean
-public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList(
-    "http://localhost:5173",
-    "https://iridescent-bublanina-5a9677.netlify.app",
-    "https://5c91b5cb.tecnova-fronted.pages.dev",
-    "https://f8179932.tecnova-fronted.pages.dev",
-    "https://tecnova-backend.onrender.com"  // 👈 AGREGAR ESTA
-));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-    configuration.setAllowedHeaders(Arrays.asList(
-        "Authorization", 
-        "Content-Type", 
-        "X-Requested-With", 
-        "Accept",
-        "multipart/form-data",
-        "enctype"
-    ));
-    configuration.setExposedHeaders(Arrays.asList("Authorization"));
-    configuration.setAllowCredentials(true);
-    configuration.setMaxAge(3600L);
-    
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
-}
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://iridescent-bublanina-5a9677.netlify.app",
+                "https://5c91b5cb.tecnova-fronted.pages.dev",
+                "https://f8179932.tecnova-fronted.pages.dev",
+                "https://tecnova-backend.onrender.com" // 👈 AGREGAR ESTA
+
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "multipart/form-data",
+                "enctype"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -72,6 +73,7 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas
+                        .requestMatchers("/").permitAll() // 👈 AGREGAR ESTA LÍNEA
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
