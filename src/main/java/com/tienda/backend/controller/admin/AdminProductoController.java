@@ -1,6 +1,7 @@
 package com.tienda.backend.controller.admin;
 
 import com.tienda.backend.model.Producto;
+import com.tienda.backend.model.Variante;
 import com.tienda.backend.repository.ProductoRepository;
 import com.tienda.backend.repository.CategoriaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,12 +11,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/productos")
+@CrossOrigin(origins = {"http://localhost:5173", "https://tecnova-fronted.pages.dev", "https://tecnova-backend.onrender.com"}, allowCredentials = "true")
 public class AdminProductoController {
     
     @Autowired
@@ -32,14 +33,6 @@ public class AdminProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     public List<Producto> getAllProductos() {
         List<Producto> productos = productoRepository.findAll();
-        
-        // Asegurar que las imágenes por color se devuelvan como mapa
-        productos.forEach(producto -> {
-            if (producto.getImagenesPorColor() == null) {
-                producto.setImagenesPorColor(new HashMap<>());
-            }
-        });
-        
         return productos;
     }
     
@@ -48,12 +41,7 @@ public class AdminProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
         return productoRepository.findById(id)
-            .map(producto -> {
-                if (producto.getImagenesPorColor() == null) {
-                    producto.setImagenesPorColor(new HashMap<>());
-                }
-                return ResponseEntity.ok(producto);
-            })
+            .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
     
@@ -68,37 +56,20 @@ public class AdminProductoController {
                     .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
             }
             
-            // Validar y procesar imágenes por color
-            if (producto.getImagenesPorColor() == null) {
-                producto.setImagenesPorColor(new HashMap<>());
-            }
-            
-            // Limpiar valores nulos en el mapa de imágenes por color
-            producto.getImagenesPorColor().entrySet().removeIf(entry -> entry.getValue() == null || entry.getValue().trim().isEmpty());
-            
-            // Validar que los colores tengan imágenes válidas
-            for (Map.Entry<String, String> entry : producto.getImagenesPorColor().entrySet()) {
-                String color = entry.getKey();
-                String imagenUrl = entry.getValue();
-                if (imagenUrl == null || imagenUrl.trim().isEmpty()) {
-                    return ResponseEntity.badRequest()
-                        .body("El color " + color + " debe tener una imagen válida");
-                }
-            }
-            
-            // Asegurar que el precio sea un número sin decimales (double)
+            // Asegurar que el precio sea un número sin decimales
             if (producto.getPrecio() != null) {
-                // Redondear a entero si tiene decimales
                 producto.setPrecio(Math.floor(producto.getPrecio()));
             }
             
-            Producto nuevoProducto = productoRepository.save(producto);
-            
-            // Asegurar que la respuesta incluya el mapa de imágenes
-            if (nuevoProducto.getImagenesPorColor() == null) {
-                nuevoProducto.setImagenesPorColor(new HashMap<>());
+            // Limpiar variantes nulas o vacías
+            if (producto.getVariantes() != null) {
+                producto.getVariantes().removeIf(variante -> 
+                    variante.getColor() == null || variante.getColor().trim().isEmpty() ||
+                    variante.getAlmacenamiento() == null || variante.getAlmacenamiento().trim().isEmpty()
+                );
             }
             
+            Producto nuevoProducto = productoRepository.save(producto);
             return ResponseEntity.ok(nuevoProducto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,7 +87,7 @@ public class AdminProductoController {
                 producto.setNombre(productoActualizado.getNombre());
                 producto.setDescripcion(productoActualizado.getDescripcion());
                 
-                // Asegurar que el precio sea un número entero (sin decimales)
+                // Precio (redondear a entero)
                 if (productoActualizado.getPrecio() != null) {
                     producto.setPrecio(Math.floor(productoActualizado.getPrecio()));
                 } else {
@@ -130,48 +101,31 @@ public class AdminProductoController {
                 producto.setStock(productoActualizado.getStock());
                 producto.setSku(productoActualizado.getSku());
                 producto.setEspecificaciones(productoActualizado.getEspecificaciones());
-                producto.setColoresDisponibles(productoActualizado.getColoresDisponibles());
                 
-                // Actualizar el mapa de imágenes por color
-                if (productoActualizado.getImagenesPorColor() != null) {
-                    // Limpiar valores nulos
-                    productoActualizado.getImagenesPorColor().entrySet().removeIf(entry -> 
-                        entry.getValue() == null || entry.getValue().trim().isEmpty()
+                // Actualizar variantes
+                if (productoActualizado.getVariantes() != null) {
+                    productoActualizado.getVariantes().removeIf(variante -> 
+                        variante.getColor() == null || variante.getColor().trim().isEmpty() ||
+                        variante.getAlmacenamiento() == null || variante.getAlmacenamiento().trim().isEmpty()
                     );
-                    producto.setImagenesPorColor(productoActualizado.getImagenesPorColor());
+                    producto.setVariantes(productoActualizado.getVariantes());
                 } else {
-                    producto.setImagenesPorColor(new HashMap<>());
-                }
-                
-                // Validar que todos los colores disponibles tengan una imagen asociada (opcional)
-                if (producto.getColoresDisponibles() != null && !producto.getColoresDisponibles().isEmpty()) {
-                    for (String color : producto.getColoresDisponibles()) {
-                        if (!producto.getImagenesPorColor().containsKey(color)) {
-                            System.out.println("Advertencia: El color " + color + " no tiene imagen asociada");
-                        }
-                    }
+                    producto.setVariantes(null);
                 }
                 
                 Producto productoGuardado = productoRepository.save(producto);
-                
-                // Asegurar que la respuesta incluya el mapa de imágenes
-                if (productoGuardado.getImagenesPorColor() == null) {
-                    productoGuardado.setImagenesPorColor(new HashMap<>());
-                }
-                
                 return ResponseEntity.ok(productoGuardado);
             })
             .orElse(ResponseEntity.notFound().build());
     }
     
-    // Actualizar parcialmente un producto (PATCH) - Útil para actualizar solo algunos campos
+    // Actualizar parcialmente un producto (PATCH)
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> actualizarProductoParcial(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         return productoRepository.findById(id)
             .map(producto -> {
                 try {
-                    // Actualizar campos específicos según lo que llegue en el request
                     if (updates.containsKey("nombre")) {
                         producto.setNombre((String) updates.get("nombre"));
                     }
@@ -182,7 +136,6 @@ public class AdminProductoController {
                         Object precioObj = updates.get("precio");
                         if (precioObj instanceof Number) {
                             double precio = ((Number) precioObj).doubleValue();
-                            // Redondear a entero
                             producto.setPrecio(Math.floor(precio));
                         } else if (precioObj instanceof String) {
                             try {
@@ -214,18 +167,19 @@ public class AdminProductoController {
                     if (updates.containsKey("especificaciones")) {
                         producto.setEspecificaciones((String) updates.get("especificaciones"));
                     }
-                    if (updates.containsKey("coloresDisponibles")) {
-                        producto.setColoresDisponibles((List<String>) updates.get("coloresDisponibles"));
-                    }
-                    if (updates.containsKey("imagenesPorColor")) {
-                        Map<String, String> imagenesPorColor = (Map<String, String>) updates.get("imagenesPorColor");
-                        if (imagenesPorColor != null) {
-                            imagenesPorColor.entrySet().removeIf(entry -> 
-                                entry.getValue() == null || entry.getValue().trim().isEmpty()
+                    if (updates.containsKey("variantes")) {
+                        List<Variante> variantes = objectMapper.convertValue(
+                            updates.get("variantes"), 
+                            objectMapper.getTypeFactory().constructCollectionType(List.class, Variante.class)
+                        );
+                        if (variantes != null) {
+                            variantes.removeIf(v -> 
+                                v.getColor() == null || v.getColor().trim().isEmpty() ||
+                                v.getAlmacenamiento() == null || v.getAlmacenamiento().trim().isEmpty()
                             );
-                            producto.setImagenesPorColor(imagenesPorColor);
+                            producto.setVariantes(variantes);
                         } else {
-                            producto.setImagenesPorColor(new HashMap<>());
+                            producto.setVariantes(null);
                         }
                     }
                     
@@ -248,32 +202,6 @@ public class AdminProductoController {
                 return ResponseEntity.ok(Map.of(
                     "message", "Producto eliminado correctamente",
                     "id", id
-                ));
-            })
-            .orElse(ResponseEntity.notFound().build());
-    }
-    
-    // Endpoint adicional para actualizar solo las imágenes por color
-    @PatchMapping("/{id}/imagenes-por-color")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizarImagenesPorColor(
-            @PathVariable Long id, 
-            @RequestBody Map<String, String> imagenesPorColor) {
-        return productoRepository.findById(id)
-            .map(producto -> {
-                if (imagenesPorColor != null) {
-                    imagenesPorColor.entrySet().removeIf(entry -> 
-                        entry.getValue() == null || entry.getValue().trim().isEmpty()
-                    );
-                    producto.setImagenesPorColor(imagenesPorColor);
-                } else {
-                    producto.setImagenesPorColor(new HashMap<>());
-                }
-                
-                Producto productoGuardado = productoRepository.save(producto);
-                return ResponseEntity.ok(Map.of(
-                    "message", "Imágenes por color actualizadas correctamente",
-                    "imagenesPorColor", productoGuardado.getImagenesPorColor()
                 ));
             })
             .orElse(ResponseEntity.notFound().build());
