@@ -7,36 +7,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
+import java.util.Collections;
 import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/upload")
 
 public class UploadController {
-    
+
     @Autowired
     private Cloudinary cloudinary;
-    
+
     @PostMapping("/imagen")
     public ResponseEntity<?> subirImagen(@RequestParam("file") MultipartFile file) {
         try {
-            System.out.println("🔍 Usando Cloudinary bean con cloud_name: " + cloudinary.config.cloudName);
-            
-            Map uploadResult = cloudinary.uploader().upload(
-                file.getBytes(),
-                ObjectUtils.asMap("folder", "tecnova")
-            );
-            
-            String imageUrl = (String) uploadResult.get("secure_url");
-            System.out.println("✅ Imagen subida: " + imageUrl);
-            
-            Map<String, String> response = new HashMap<>();
-            response.put("url", imageUrl);
-            return ResponseEntity.ok(response);
-            
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = uploadResult.get("secure_url").toString();
+            return ResponseEntity.ok(Collections.singletonMap("url", imageUrl));
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error al subir la imagen: " + e.getMessage());
         }
     }
 }
